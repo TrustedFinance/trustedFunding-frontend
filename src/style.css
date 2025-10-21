@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque", sans-serif;
+
+  /* Logo-Inspired Colors */
+  --color-primary-blue: #0a66c2; /* Similar to your logo's main blue */
+  --color-dark-navy: #001f3f; /* Deep Navy for Trust and Foundation (Primary Accent) */
+  --color-pure-white: #ffffff; /* From your logo and for clean backgrounds */
+
+  /* Secondary & Accent Colors */
+  --color-silver-gray: #bfbfbf; /* Crisp Metallic Gray for Technology/Modernity (Secondary Accent) */
+  --color-cool-light: #f5f7fa; /* Very light, cool gray for subtle backgrounds (Neutral) */
+  --color-highlight-text: #333333; /* Dark gray for primary text */
+}
+
+::selection {
+  background-color: var(--color-primary-blue);
+  color: var(--color-pure-white);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary-blue);
+  color: var(--color-pure-white);
+}
+
+/* Optional: Style markers if needed */
+::marker {
+  color: var(--color-primary-blue);
+}
+a, button{
+  cursor:poineter;
+}
