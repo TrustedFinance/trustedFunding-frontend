@@ -28,7 +28,7 @@ import { ref } from 'vue'
 import UserSidebar from "@/components/User/UserSidebar.vue"
 import UserHeader from "@/components/User/UserHeader.vue"
 import UserFooter from "@/components/User/UserFooter.vue"
-import ToastContainer from "@/components/atoms/ToastContainer.vue"
+import ToastContainer from "@/components/Atoms/ToastContainer.vue"
 
 const isSidebarOpen = ref(false)
 
