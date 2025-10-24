@@ -32,7 +32,7 @@ import NoneLayout from "@/layouts/NoneLayout.vue";
 // --- Other Global Components ---
 import GlobalLoader from "@/components/Atoms/GlobalLoader.vue";
 import ScrollToTop from "@/components/ScrollToTop.vue";
-import ToastContainer from "@/components/atoms/ToastContainer.vue";
+import ToastContainer from "@/components/Atoms/ToastContainer.vue";
 
 const route = useRoute();
 const authStore = useAuthStore();
