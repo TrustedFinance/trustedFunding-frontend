@@ -23,7 +23,7 @@
 
                 <div class="tradingview-widget-copyright text-center mt-4">
                   <a href="#" rel="noopener" target="_blank" class="text-[#333366] hover:text-[#0066cc] transition-colors font-medium">
-                    Exchange Rates by TrustedFunding
+                    Exchange Rates by Trusted Finance
                   </a>
                 </div>
               </div>
@@ -39,12 +39,12 @@
               
               <div class="space-y-4 text-gray-700 leading-relaxed text-lg">
                 <p>
-                  TrustedFunding is truly one of the best brokers, all you have to do is choose all your 
+                  Trusted Finance is truly one of the best brokers, all you have to do is choose all your 
                   favourite options and we'll lead you to the perfect account type where you can start 
                   succeeding.
                 </p>
                 <p>
-                  You are unlikely to find a more comfortable Forex broker than TrustedFunding.
+                  You are unlikely to find a more comfortable Forex broker than Trusted Finance.
                   Our company provides Forex customers the best possible conditions for successful Forex
                   trading as well as Binary and Crypto Trades. We have offers for both beginners and experienced traders.
                 </p>
@@ -96,7 +96,7 @@
             <div class="thumb relative group">
               <img 
                 src="@/assets/images/Real-estate.jpg" 
-                alt="Real Estate Investment Portfolio - TrustedFunding"
+                alt="Real Estate Investment Portfolio - Trusted Finance"
                 class="w-full h-auto rounded-2xl  transition-all duration-500  group-hover:scale-[1.02]"
                 @load="realEstateImageLoaded = true"
                 @error="handleImageError('realEstate')"
@@ -132,7 +132,7 @@
                   Our <strong class="text-[#333366]">$7+ billion real estate portfolio</strong> aims to harness the most powerful long-term drivers of the U.S. real estate market.
                 </p>
                 <p>
-                  In today's macroeconomic environment, we believe the TrustedFunding portfolio is as well-positioned as any in the world to deliver stable, market-beating returns.
+                  In today's macroeconomic environment, we believe the Trusted Finance portfolio is as well-positioned as any in the world to deliver stable, market-beating returns.
                 </p>
               </div>
 
@@ -180,7 +180,7 @@
             <div class="thumb relative group">
               <img 
                 src="@/assets/images/Estate-agent.jpg" 
-                alt="10+ Years Real Estate Experience - TrustedFunding"
+                alt="10+ Years Real Estate Experience - Trusted Finance"
                 class="w-full h-auto rounded-2xl  transition-all duration-500  group-hover:scale-[1.02]"
                 @load="experienceImageLoaded = true"
                 @error="handleImageError('experience')"

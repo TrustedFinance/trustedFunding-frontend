@@ -53,7 +53,7 @@
           <!-- Description -->
           <div class="text-gray-600 leading-relaxed space-y-4 text-lg">
             <p>
-              <strong class="text-[#333366]">TrustedFunding</strong> is an
+              <strong class="text-[#333366]">Trusted Finance</strong> is an
               independent trading and investment company specializing in
               <strong>FOREX, CRYPTO, STOCKS, and REAL ESTATE</strong>.
             </p>
@@ -268,3 +268,8 @@ const trustIndicators = [
   },
 ];
 </script>
+<style scoped>
+.default-padding {
+  padding: 40px 0;
+}
+</style>

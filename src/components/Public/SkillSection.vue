@@ -16,7 +16,7 @@
           <!-- Main Image -->
           <img
             src="@/assets/images/smallbanner.jpg"
-            alt="Trusted Funding - Advanced Trading Platform"
+            alt="Trusted Finance - Advanced Trading Platform"
             class="w-full h-auto object-cover rounded-3xl transition-all duration-700 ease-out transform"
             :class="[
               imageLoaded ? 'grayscale-0' : 'grayscale',

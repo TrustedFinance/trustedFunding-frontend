@@ -1,153 +1,298 @@
 <template>
-  <nav>
+  <nav
+    class="sticky top-0 z-50 bg-pure-white/90 backdrop-blur-sm border-b border-silver-gray/30"
+  >
     <!-- Top Bar -->
-    <div class="bg-[#1a2332] text-[#e0e0e0]">
-      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div class="flex flex-col sm:flex-row justify-between items-center py-2 gap-2 sm:gap-4 text-center sm:text-left">
-          <div class="flex items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm">
-            <font-awesome-icon icon="map-marker-alt" class="w-4 h-4 text-[#0066cc]" />
-            <span class="truncate">123 Business Street, City, Country</span>
+    <div
+      class="bg-gradient-to-r from-primary-blue/10 to-primary-blue/5 border-b border-silver-gray/30"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center py-2 gap-2 sm:gap-4"
+        >
+          <div class="flex items-center gap-3 text-sm text-highlight-text/70">
+            <div
+              class="flex items-center gap-2 hover:text-primary-blue transition-colors"
+            >
+              <font-awesome-icon icon="map-marker-alt" class="w-4 h-4" />
+              <span class="truncate max-w-[200px] sm:max-w-none">
+                123 Business Street, City, Country
+              </span>
+            </div>
+            <div class="hidden sm:block w-px h-4 bg-silver-gray"></div>
+            <a
+              href="mailto:support@Trusted Finance.com"
+              class="flex items-center gap-2 hover:text-primary-blue transition-colors"
+            >
+              <font-awesome-icon icon="envelope" class="w-4 h-4" />
+              <span class="truncate max-w-[200px] sm:max-w-none">
+                support@Trusted Finance.com
+              </span>
+            </a>
           </div>
-          <div class="flex items-center justify-center sm:justify-end gap-2 text-xs sm:text-sm">
-            <font-awesome-icon icon="envelope" class="w-4 h-4 text-[#0066cc]" />
-            <span class="truncate">support@trustedfunding.com</span>
+
+          <div class="flex items-center gap-4 text-sm">
+            <a
+              href="tel:+15551234567"
+              class="hidden md:flex items-center gap-2 text-highlight-text/70 hover:text-primary-blue transition-colors"
+            >
+              <font-awesome-icon icon="phone" class="w-4 h-4" />
+              <span>+1 (555) 123-4567</span>
+            </a>
+            <div class="flex items-center gap-2">
+              <a
+                v-for="social in socialLinks"
+                :key="social.name"
+                :href="social.url"
+                :aria-label="social.name"
+                class="w-8 h-8 flex items-center justify-center rounded-lg bg-cool-light text-highlight-text/70 hover:text-primary-blue hover:bg-primary-blue/10 transition-all duration-200"
+              >
+                <font-awesome-icon
+                  :icon="['fab', social.icon]"
+                  class="w-4 h-4"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Main Navbar -->
-    <div :class="['bg-white transition-all duration-300', scrolled ? 'py-3 shadow-sm' : 'py-4']">
-      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+    <!-- Main Navigation -->
+    <div :class="['transition-all duration-300', scrolled ? 'py-2' : 'py-4']">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
           <!-- Logo -->
-          <router-link to="/" class="flex items-center gap-3 group">
-            <div
-              class="w-10 h-10 bg-[#0066cc] rounded-xl flex items-center justify-center transform transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3"
-            >
-              <span class="text-white font-bold text-lg">TF</span>
+          <router-link
+            to="/"
+            class="flex items-center gap-3 group"
+            aria-label="Trusted Finance Home"
+          >
+            <div class="relative">
+              <img
+                src="@/assets/images/logo.png"
+                alt="Trusted Finance Logo"
+                class="w-12 h-12 sm:w-14 sm:h-14 object-contain transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-2"
+              />
+              <div
+                class="absolute inset-0 bg-primary-blue/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              ></div>
             </div>
-            <span class="text-[#1a2332] font-bold text-lg sm:text-xl hidden sm:block">
-              TrustedFunding
-            </span>
           </router-link>
 
-          <!-- Desktop / Tablet Navigation -->
-          <div ref="dropdownRef" class="hidden md:flex items-center gap-1 flex-wrap">
-            <div v-for="item in navigationItems" :key="item.name" class="relative">
-              <button
-                @click="item.children ? toggleDropdown(item.name) : null"
-                :is="item.children ? 'button' : 'router-link'"
+          <!-- Desktop Navigation -->
+          <div class="hidden lg:flex items-center gap-1">
+            <div
+              v-for="item in navigationItems"
+              :key="item.name"
+              class="relative"
+              @mouseenter="item.children ? (activeDropdown = item.name) : null"
+              @mouseleave="item.children ? (activeDropdown = null) : null"
+              v-memo="[item.name, route.path]"
+            >
+              <!-- Regular Link -->
+              <router-link
+                v-if="!item.children"
                 :to="item.route"
-                class="px-3 lg:px-4 py-2 text-[#333333] font-medium rounded-lg transition-all duration-200 flex items-center gap-1 hover:bg-[#f5f5f5] hover:text-[#0066cc] cursor-pointer"
+                :class="[
+                  'px-3 lg:px-4 py-2 font-medium rounded-lg flex items-center gap-1 transition-all duration-200 hover:bg-primary-blue/10 hover:text-dark-navy whitespace-nowrap',
+                  isActiveRoute(item)
+                    ? 'text-dark-navy bg-primary-blue/10'
+                    : 'text-highlight-text',
+                ]"
+              >
+                {{ item.name }}
+              </router-link>
+
+              <!-- Dropdown Parent -->
+              <button
+                v-else
+                type="button"
+                :class="[
+                  'px-3 lg:px-4 py-2 font-medium rounded-lg flex items-center gap-1 transition-all duration-200 hover:bg-primary-blue/10 hover:text-dark-navy whitespace-nowrap',
+                  isActiveRoute(item)
+                    ? 'text-dark-navy bg-primary-blue/10'
+                    : 'text-highlight-text',
+                ]"
+                :aria-expanded="activeDropdown === item.name"
               >
                 {{ item.name }}
                 <font-awesome-icon
-                  v-if="item.children"
                   icon="chevron-down"
-                  :class="['w-4 h-4 transition-transform duration-200', activeDropdown === item.name ? 'rotate-180' : '']"
+                  :class="[
+                    'w-3 h-3 transition-transform duration-200',
+                    activeDropdown === item.name ? 'rotate-180' : '',
+                  ]"
                 />
               </button>
 
-              <!-- Dropdown -->
-              <div
-                v-if="item.children && activeDropdown === item.name"
-                class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-[#f5f5f5] overflow-hidden animate-dropdown z-50"
-              >
-                <router-link
-                  v-for="(child, idx) in item.children"
-                  :key="child"
-                  :to="getRoutePath(child)"
-                  @click="activeDropdown = null"
-                  :class="[
-                    'block px-4 py-3 text-[#333333] transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#0066cc] hover:pl-6',
-                    idx !== item.children.length - 1 ? 'border-b border-[#f5f5f5]' : '',
-                  ]"
+              <!-- Dropdown Menu -->
+              <transition name="dropdown">
+                <div
+                  v-if="item.children && activeDropdown === item.name"
+                  class="absolute top-full left-0 mt-1 w-64 bg-pure-white rounded-xl border border-silver-gray overflow-hidden shadow-lg z-50 pointer-events-auto"
                 >
-                  {{ child }}
-                </router-link>
-              </div>
+                  <router-link
+                    v-for="(child, idx) in item.children"
+                    :key="child.name"
+                    :to="child.route"
+                    @click="activeDropdown = null"
+                    :class="[
+                      'px-4 py-3 transition-all duration-200 flex items-center gap-3',
+                      'hover:bg-primary-blue/10 hover:text-dark-navy hover:pl-5',
+                      isActiveRoute(child)
+                        ? 'text-dark-navy bg-primary-blue/5'
+                        : 'text-highlight-text',
+                      idx !== item.children.length - 1
+                        ? 'border-b border-silver-gray/50'
+                        : '',
+                    ]"
+                  >
+                    <font-awesome-icon
+                      :icon="child.icon"
+                      class="w-4 h-4 opacity-60"
+                    />
+                    <span>{{ child.name }}</span>
+                  </router-link>
+                </div>
+              </transition>
             </div>
           </div>
 
-          <!-- Desktop Buttons -->
-          <div class="hidden md:flex items-center gap-3">
+          <!-- Desktop Auth Buttons -->
+          <div class="hidden lg:flex items-center gap-3">
             <router-link
               to="/login"
-              class="px-4 lg:px-5 py-2 text-[#333333] font-medium rounded-lg transition-all duration-200 hover:bg-[#f5f5f5] hover:text-[#0066cc]"
+              class="px-4 lg:px-5 py-2 font-medium rounded-lg hover:bg-primary-blue/10 hover:text-dark-navy border border-transparent hover:border-primary-blue/20 text-highlight-text transition-all duration-200"
             >
               Login
             </router-link>
             <router-link
               to="/register"
-              class="px-5 lg:px-6 py-2 bg-[#0066cc] text-white font-medium rounded-lg transition-all duration-200 hover:bg-[#1a2332] hover:shadow-lg transform hover:scale-105"
+              class="px-5 lg:px-6 py-2 bg-dark-navy text-pure-white font-medium rounded-lg hover:bg-primary-blue transform hover:scale-105 transition-all duration-200"
             >
-              Register
+              Get Started
             </router-link>
           </div>
 
           <!-- Mobile Menu Button -->
           <button
             @click="toggleMobileMenu"
-            class="md:hidden p-2 rounded-lg text-[#1a2332] hover:bg-[#f5f5f5] transition-all duration-200"
+            class="lg:hidden p-3 rounded-xl text-highlight-text hover:bg-primary-blue/10 hover:text-dark-navy transition-all duration-200 relative"
+            :aria-expanded="isMobileMenuOpen"
+            aria-label="Toggle navigation menu"
           >
-            <font-awesome-icon :icon="isMobileMenuOpen ? 'times' : 'bars'" class="w-6 h-6" />
+            <font-awesome-icon
+              :icon="isMobileMenuOpen ? 'times' : 'bars'"
+              class="w-5 h-5"
+            />
           </button>
         </div>
 
         <!-- Mobile Navigation -->
-        <transition name="fade-slide">
+        <transition name="mobile-menu">
           <div
             v-if="isMobileMenuOpen"
-            class="md:hidden mt-4 bg-[#f5f5f5] rounded-2xl p-4 animate-slideDown overflow-y-auto max-h-[80vh]"
+            class="lg:hidden mt-4 bg-cool-light backdrop-blur-sm rounded-2xl p-6 border border-silver-gray/50 overflow-y-auto max-h-[80vh]"
           >
-            <div class="space-y-1">
+            <div class="space-y-2">
               <div v-for="item in navigationItems" :key="item.name">
-                <component
-                  :is="item.children ? 'button' : 'router-link'"
+                <router-link
+                  v-if="!item.children"
                   :to="item.route"
-                  @click="item.children ? toggleMobileDropdown(item.name) : (isMobileMenuOpen = false)"
-                  class="w-full flex items-center justify-between px-4 py-3 text-[#333333] font-medium rounded-lg transition-all duration-200 hover:bg-white hover:text-[#0066cc]"
+                  @click="closeMobileMenu"
+                  :class="[
+                    'w-full flex items-center justify-between px-4 py-3 font-medium rounded-xl transition-all duration-200',
+                    'hover:bg-primary-blue/10 hover:text-dark-navy',
+                    isActiveRoute(item)
+                      ? 'text-dark-navy bg-primary-blue/10'
+                      : 'text-highlight-text',
+                  ]"
                 >
-                  <span>{{ item.name }}</span>
-                  <font-awesome-icon
-                    v-if="item.children"
-                    icon="chevron-down"
-                    :class="['w-4 h-4 transition-transform duration-200', activeMobileDropdown === item.name ? 'rotate-180' : '']"
-                  />
-                </component>
+                  <div class="flex items-center gap-3">
+                    <font-awesome-icon
+                      v-if="item.icon"
+                      :icon="item.icon"
+                      class="w-4 h-4 opacity-60"
+                    />
+                    <span>{{ item.name }}</span>
+                  </div>
+                </router-link>
 
-                <transition name="fade-slide">
+                <button
+                  v-else
+                  @click="toggleMobileDropdown(item.name)"
+                  :class="[
+                    'w-full flex items-center justify-between px-4 py-3 font-medium rounded-xl transition-all duration-200',
+                    'hover:bg-primary-blue/10 hover:text-dark-navy',
+                    isActiveRoute(item)
+                      ? 'text-dark-navy bg-primary-blue/10'
+                      : 'text-highlight-text',
+                  ]"
+                  :aria-expanded="activeMobileDropdown === item.name"
+                >
+                  <div class="flex items-center gap-3">
+                    <font-awesome-icon
+                      v-if="item.icon"
+                      :icon="item.icon"
+                      class="w-4 h-4 opacity-60"
+                    />
+                    <span>{{ item.name }}</span>
+                  </div>
+                  <font-awesome-icon
+                    icon="chevron-down"
+                    :class="[
+                      'w-4 h-4 transition-transform duration-200',
+                      activeMobileDropdown === item.name ? 'rotate-180' : '',
+                    ]"
+                  />
+                </button>
+
+                <transition name="mobile-dropdown">
                   <div
                     v-if="item.children && activeMobileDropdown === item.name"
-                    class="ml-3 mt-1 space-y-1 animate-slideDown"
+                    class="ml-8 mt-2 space-y-1 border-l-2 border-primary-blue/20 pl-4"
                   >
                     <router-link
                       v-for="child in item.children"
-                      :key="child"
-                      :to="getRoutePath(child)"
+                      :key="child.name"
+                      :to="child.route"
                       @click="closeMobileMenu"
-                      class="block px-4 py-2 text-[#333333] rounded-lg transition-all duration-200 hover:bg-white hover:text-[#0066cc] hover:pl-6"
+                      :class="[
+                        'px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-3',
+                        'hover:bg-primary-blue/10 hover:text-dark-navy',
+                        isActiveRoute(child)
+                          ? 'text-dark-navy bg-primary-blue/5'
+                          : 'text-highlight-text',
+                      ]"
                     >
-                      {{ child }}
+                      <font-awesome-icon
+                        :icon="child.icon"
+                        class="w-4 h-4 opacity-60"
+                      />
+                      <span>{{ child.name }}</span>
                     </router-link>
                   </div>
                 </transition>
               </div>
 
-              <!-- Auth Buttons -->
-              <div class="flex flex-col gap-2 pt-4 mt-4 border-t border-[#e0e0e0]">
+              <!-- Mobile Auth Buttons -->
+              <div
+                class="flex flex-col gap-3 pt-6 mt-4 border-t border-silver-gray/50"
+              >
                 <router-link
                   to="/login"
-                  class="w-full py-3 text-[#333333] font-medium rounded-lg border-2 border-[#e0e0e0] bg-white transition-all duration-200 hover:border-[#0066cc] hover:text-[#0066cc] text-center"
+                  @click="closeMobileMenu"
+                  class="w-full py-3 font-medium rounded-lg border-2 border-silver-gray bg-pure-white hover:border-primary-blue hover:text-dark-navy text-center text-highlight-text transition-all duration-200"
                 >
                   Login
                 </router-link>
                 <router-link
                   to="/register"
-                  class="w-full py-3 bg-[#0066cc] text-white font-medium rounded-lg transition-all duration-200 hover:bg-[#1a2332] hover:shadow-lg text-center"
+                  @click="closeMobileMenu"
+                  class="w-full py-3 bg-dark-navy text-pure-white font-medium rounded-lg hover:bg-primary-blue text-center transition-all duration-200"
                 >
-                  Register
+                  Get Started
                 </router-link>
               </div>
             </div>
@@ -159,105 +304,159 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const activeDropdown = ref(null);
 const activeMobileDropdown = ref(null);
 const isMobileMenuOpen = ref(false);
 const scrolled = ref(false);
-const dropdownRef = ref(null);
+
+const socialLinks = [
+  { name: "Twitter", icon: "twitter", url: "#" },
+  { name: "LinkedIn", icon: "linkedin-in", url: "#" },
+  { name: "Facebook", icon: "facebook-f", url: "#" },
+];
 
 const navigationItems = ref([
-  { name: "Home", route: "/" },
-  { name: "About Us", route: "/about" },
-  { name: "Services", route: "/services" },
-  { name: "Price", route: "/price" },
+  { name: "Home", route: "/", icon: "home" },
+  { name: "About Us", route: "/about", icon: "info-circle" },
+  { name: "Services", route: "/our-services", icon: "cogs" },
+  { name: "Pricing", route: "/pricing", icon: "tags" },
   {
     name: "Legal",
+    icon: "balance-scale",
     children: [
-      "License and Regulation",
-      "Privacy Policy",
-      "Safety of Funds",
-      "Trading Conditions",
+      {
+        name: "License & Regulation",
+        route: "/license-&-regulation",
+        icon: "certificate",
+      },
+      { name: "Privacy Policy", route: "/privacy-policy", icon: "shield-alt" },
+      { name: "Safety of Funds", route: "/safety-of-funds", icon: "lock" },
+      {
+        name: "Trading Conditions",
+        route: "/trading-conditions",
+        icon: "chart-line",
+      },
     ],
   },
-  { name: "Contact us", route: "/contact" },
-  { name: "FAQ", route: "/faq" },
+  { name: "Contact", route: "/contact", icon: "envelope" },
+  { name: "FAQ", route: "/faq", icon: "question-circle" },
 ]);
 
-const getRoutePath = (page) => "/" + page.toLowerCase().replace(/\s+/g, "-");
+const isActiveRoute = (item) =>
+  route.path === item.route ||
+  (item.children && item.children.some((child) => route.path === child.route));
 
-const toggleDropdown = (name) => (activeDropdown.value = activeDropdown.value === name ? null : name);
-const toggleMobileDropdown = (name) => (activeMobileDropdown.value = activeMobileDropdown.value === name ? null : name);
+const toggleMobileDropdown = (name) => {
+  activeMobileDropdown.value =
+    activeMobileDropdown.value === name ? null : name;
+};
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
   activeMobileDropdown.value = null;
-  document.body.style.overflow = isMobileMenuOpen.value ? "hidden" : "auto";
+  document.body.classList.toggle("menu-open", isMobileMenuOpen.value);
 };
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
   activeMobileDropdown.value = null;
-  document.body.style.overflow = "auto";
+  document.body.classList.remove("menu-open");
 };
 
-const handleScroll = () => (scrolled.value = window.scrollY > 10);
-const handleClickOutside = (e) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(e.target)) activeDropdown.value = null;
+const handleScroll = () => {
+  scrolled.value = window.scrollY > 20;
 };
+
+const handleEscape = (e) => {
+  if (e.key === "Escape") {
+    if (isMobileMenuOpen.value) closeMobileMenu();
+    else activeDropdown.value = null;
+  }
+};
+
 const handleResize = () => {
-  if (window.innerWidth >= 768) closeMobileMenu();
+  if (window.innerWidth >= 1024) closeMobileMenu();
 };
+
+// Reset dropdowns on route change
+watch(
+  () => route.path,
+  () => {
+    activeDropdown.value = null;
+    closeMobileMenu();
+  }
+);
 
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
-  document.addEventListener("mousedown", handleClickOutside);
   window.addEventListener("resize", handleResize);
+  document.addEventListener("keydown", handleEscape);
 });
+
 onUnmounted(() => {
   window.removeEventListener("scroll", handleScroll);
-  document.removeEventListener("mousedown", handleClickOutside);
   window.removeEventListener("resize", handleResize);
+  document.removeEventListener("keydown", handleEscape);
 });
 </script>
 
 <style scoped>
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Animations */
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: all 0.2s ease-out;
 }
-.animate-slideDown {
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes dropdown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-.animate-dropdown {
-  animation: dropdown 0.25s ease-out;
-}
-
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from,
-.fade-slide-leave-to {
+.dropdown-enter-from,
+.dropdown-leave-to {
   opacity: 0;
-  transform: translateY(-8px);
+  transform: translateY(-8px) scale(0.95);
+}
+
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.98);
+}
+
+.mobile-dropdown-enter-active,
+.mobile-dropdown-leave-active {
+  transition: all 0.25s ease-out;
+}
+.mobile-dropdown-enter-from,
+.mobile-dropdown-leave-to {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+/* Accessibility focus styles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--color-primary-blue);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Prevent background scroll when mobile menu is open */
+body.menu-open {
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* Scrollbar styling for mobile menu */
+.max-h-\[80vh\]::-webkit-scrollbar {
+  width: 4px;
+}
+.max-h-\[80vh\]::-webkit-scrollbar-thumb {
+  background: var(--color-silver-gray);
+  border-radius: 2px;
 }
 </style>

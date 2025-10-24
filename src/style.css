@@ -4,14 +4,12 @@
   --font-display: "Bricolage Grotesque", sans-serif;
 
   /* Logo-Inspired Colors */
-  --color-primary-blue: #0a66c2; /* Similar to your logo's main blue */
-  --color-dark-navy: #001f3f; /* Deep Navy for Trust and Foundation (Primary Accent) */
-  --color-pure-white: #ffffff; /* From your logo and for clean backgrounds */
-
-  /* Secondary & Accent Colors */
-  --color-silver-gray: #bfbfbf; /* Crisp Metallic Gray for Technology/Modernity (Secondary Accent) */
-  --color-cool-light: #f5f7fa; /* Very light, cool gray for subtle backgrounds (Neutral) */
-  --color-highlight-text: #333333; /* Dark gray for primary text */
+  --color-primary-blue: #0a66c2;
+  --color-dark-navy: #001f3f;
+  --color-pure-white: #ffffff;
+  --color-silver-gray: #bfbfbf;
+  --color-cool-light: #f5f7fa;
+  --color-highlight-text: #333333;
 }
 
 ::selection {
@@ -24,10 +22,56 @@
   color: var(--color-pure-white);
 }
 
-/* Optional: Style markers if needed */
 ::marker {
   color: var(--color-primary-blue);
 }
-a, button{
-  cursor:poineter;
+html{
+  scroll-behavior: smooth;
+}
+a,
+button {
+  cursor: pointer;
+}
+
+/* Custom utility classes */
+.btn-primary {
+  @apply bg-primary-blue hover:bg-dark-navy text-pure-white hover:text-pure-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-silver-gray hover:bg-highlight-text text-dark-navy hover:text-pure-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 hover:bg-red-700 text-pure-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.card {
+  @apply bg-pure-white rounded-lg shadow-md p-6 border border-silver-gray;
+}
+
+.form-input {
+  @apply w-full px-3 py-2 border border-silver-gray rounded-md focus:outline-none focus:ring-2 focus:ring-primary-blue focus:border-transparent;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-highlight-text mb-2;
+}
+
+.loading-spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid var(--color-primary-blue);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

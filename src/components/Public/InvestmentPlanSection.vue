@@ -45,7 +45,7 @@
               class="pricing-item group"
             >
               <div
-                class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col transform hover:-translate-y-2 border border-gray-200"
+                class="bg-white rounded-2xl transition-all duration-500 overflow-hidden h-full flex flex-col transform hover:-translate-y-2 border border-gray-200"
               >
                 <!-- Popular Badge -->
                 <div
@@ -124,7 +124,7 @@
                   <!-- CTA Button -->
                   <button
                     @click="selectPlan(plan)"
-                    class="w-full bg-gradient-to-r from-[#333366] to-[#0066cc] text-white py-3 lg:py-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+                    class="w-full bg-gradient-to-r from-[#333366] to-[#0066cc] text-white py-3 lg:py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                   >
                     <span>Get Started</span>
                     <font-awesome-icon
@@ -203,7 +203,7 @@
 
           <!-- FAQ CTA -->
           <div
-            class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 text-center border border-gray-200"
+            class="bg-white rounded-2xl p-6 lg:p-8 text-center border border-gray-200"
           >
             <h3 class="text-xl lg:text-2xl font-bold text-[#333366] mb-4">
               Have questions about our plans?
@@ -215,7 +215,7 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 @click="contactSupport"
-                class="bg-gradient-to-r from-[#333366] to-[#0066cc] text-white px-6 lg:px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                class="bg-gradient-to-r from-[#333366] to-[#0066cc] text-white px-6 lg:px-8 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <font-awesome-icon icon="headset" class="w-4 h-4" />
                 <span>Contact Support</span>
@@ -325,8 +325,7 @@ const viewFAQ = () => {
 
 <style scoped>
 .pricing-area {
-  padding-top: 5px;
-  padding-bottom: 0px;
+  padding: 40px 0;
 }
 
 .bottom-less {
@@ -460,10 +459,6 @@ const viewFAQ = () => {
   .text-gray-600 {
     color: #000 !important;
   }
-
-  .shadow-lg {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  }
 }
 
 /* Dark mode support */
@@ -493,8 +488,7 @@ const viewFAQ = () => {
 
 /* Smooth transitions */
 * {
-  transition-property: color, background-color, border-color, transform, opacity,
-    box-shadow;
+  transition-property: color, background-color, border-color, transform, opacity;
   transition-duration: 300ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -522,11 +516,6 @@ button:focus-visible,
 @media print {
   .pricing-area {
     background: white !important;
-  }
-
-  .shadow-lg,
-  .hover\:shadow-2xl {
-    box-shadow: none !important;
   }
 
   .transform {

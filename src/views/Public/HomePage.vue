@@ -9,6 +9,9 @@ import AboutSection from "@/components/Public/AboutSection.vue";
 import ServicesSection from "@/components/Public/ServicesSection.vue";
 import InvestingSection from "@/components/Public/InvestingSection.vue";
 import GetStarted from "@/components/Public/GetStarted.vue";
+import InvestmentPlanSection from "@/components/Public/InvestmentPlanSection.vue";
+import AchievementSection from "@/components/Public/AchievementSection.vue";
+import TestimonialFAQ from "@/components/Public/TestimonialFAQ.vue";
 </script>
 
 <template>
@@ -23,5 +26,8 @@ import GetStarted from "@/components/Public/GetStarted.vue";
     <ServicesSection />
     <InvestingSection />
     <GetStarted />
+    <InvestmentPlanSection />
+    <AchievementSection />
+    <TestimonialFAQ />
   </main>
 </template>

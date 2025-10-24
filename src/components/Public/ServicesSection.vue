@@ -20,7 +20,7 @@
             </h2>
             <p class="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
               With over 2,000,000 clients since it was founded in 2011,
-              TrustedFunding has grown to a well established international
+              Trusted Finance has grown to a well established international
               Trading and investment firm and has become a true industry leader.
             </p>
           </div>
@@ -197,7 +197,7 @@ const services = ref([
     description:
       "Easy access for beginners & experienced traders. Know your potential profit in advance — just predict the market direction and trade confidently.",
     image: leaImg,
-    link: "https://trustedfunding.com/forex-trading",
+    link: "https://Trusted Finance.com/forex-trading",
     icon: "chart-line",
     features: [
       "Beginner-friendly platform",
@@ -212,7 +212,7 @@ const services = ref([
     description:
       "Realtime Analysis & Proper Planning. Monitor assets in real-time and make informed trading decisions with confidence.",
     image: leaderImg,
-    link: "https://trustedfunding.com/planning",
+    link: "https://Trusted Finance.com/planning",
     icon: "magnifying-glass-chart",
     features: [
       "Real-time analytics",
@@ -227,7 +227,7 @@ const services = ref([
     description:
       "High returns powered by our proven and reliable trade signals built on expert analysis.",
     image: tradeImg,
-    link: "https://trustedfunding.com/trade-signals",
+    link: "https://Trusted Finance.com/trade-signals",
     icon: "bullhorn",
     features: [
       "Accurate trade signals",
@@ -242,7 +242,7 @@ const services = ref([
     description:
       "Our support team is available around the clock through live chat or email — always ready to assist you.",
     image: consultImg,
-    link: "https://trustedfunding.com/support",
+    link: "https://Trusted Finance.com/support",
     icon: "headset",
     features: [
       "24/7 live chat",
