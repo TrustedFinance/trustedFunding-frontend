@@ -174,22 +174,23 @@ const fetchDashboardData = async () => {
   try {
     loading.value = true;
 
-    // Fetch pending/due data and user count in parallel
-    const [{ data: overviewData }, { data: usersData }] = await Promise.all([
+    const [{ data: overviewData }, { data: usersResponse }] = await Promise.all([
       adminAPI.getPendingAndDue(),
       adminAPI.getAllUsers(),
     ]);
 
-    const summary = overviewData?.summary || {};
+    const summary = overviewData?.data?.summary || {};
+    const usersData = usersResponse?.data?.users || [];
+    // const usersData = usersResponse?.data?.data?.users || [];
+
 
     stats.value = {
       pendingDeposits: summary.pendingDeposits || 0,
       pendingWithdrawals: summary.pendingWithdrawals || 0,
       dueInvestments: summary.dueInvestments || 0,
-      totalUsers: usersData?.length || 0,
+      totalUsers: usersData.length || 0,
     };
 
-    // Build pending actions dynamically
     pendingActions.value = [
       {
         id: 1,
@@ -214,7 +215,6 @@ const fetchDashboardData = async () => {
       },
     ];
 
-    // Optional: could populate this from a future endpoint
     recentActivity.value = [];
   } catch (error) {
     console.error("Error fetching dashboard data:", error);

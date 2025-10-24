@@ -1,175 +1,305 @@
-// stores/authStore.js
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { authAPI, adminAuthAPI } from "@/services/api";
+import { authAPI, adminAuthAPI, userAPI } from "@/services/api";
 
-export const useAuthStore = defineStore("auth", () => {
-  const user = ref(null);
-  const token = ref(localStorage.getItem("authToken"));
-  const isAuthenticated = computed(() => !!token.value);
-  const isAdmin = computed(() => user.value?.role === "admin");
+export const useAuthStore = defineStore("auth", {
+  state: () => ({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    isAdmin: false,
+    loading: false,
+    error: null,
+  }),
 
-  // Initialize from localStorage
-  const initAuth = () => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+  getters: {
+    currentUser: (state) => state.user,
+    userRole: (state) => state.user?.role || "user",
+    isLoggedIn: (state) => state.isAuthenticated,
+    hasAdminAccess: (state) => state.isAdmin,
+  },
+
+  actions: {
+    // ------------------- Initialize Auth from LocalStorage -------------------
+    initializeAuth() {
+      const token = localStorage.getItem("authToken");
+      const user = localStorage.getItem("user");
+
+      if (token && user) {
+        this.token = token;
+        this.user = JSON.parse(user);
+        this.isAuthenticated = true;
+        this.isAdmin = this.user.role === "admin";
+      }
+    },
+
+    // ------------------- User Registration -------------------
+    async register(userData) {
+      this.loading = true;
+      this.error = null;
+
       try {
-        user.value = JSON.parse(savedUser);
+        const { data } = await authAPI.register(userData);
+
+        // Backend returns user object but no token in response
+        // User needs to login separately after registration
+        return {
+          success: true,
+          message: "Registration successful. Please login.",
+          user: data.user,
+        };
       } catch (error) {
-        console.error("Error parsing saved user:", error);
-        localStorage.removeItem("user");
-        localStorage.removeItem("authToken");
+        this.error = error.response?.data?.message || "Registration failed";
+        throw error;
+      } finally {
+        this.loading = false;
       }
-    }
-  };
+    },
 
-  // ===== User Authentication =====
-  const login = async (credentials) => {
-    try {
-      const response = await authAPI.login(credentials);
-      const { token: authToken, user: userData } = response.data;
+    // ------------------- User Login -------------------
+    async login(credentials) {
+      this.loading = true;
+      this.error = null;
 
-      token.value = authToken;
-      user.value = userData;
+      try {
+        const { data } = await authAPI.login(credentials);
 
-      localStorage.setItem("authToken", authToken);
-      localStorage.setItem("user", JSON.stringify(userData));
+        // Store auth data
+        this.token = data.token;
+        this.user = data.user;
+        this.isAuthenticated = true;
+        this.isAdmin = data.user.role === "admin";
 
-      return { success: true, data: response.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Login failed",
-      };
-    }
-  };
+        // Persist to localStorage
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
 
-  const register = async (userData) => {
-    try {
-      const response = await authAPI.register(userData);
-      // ✅ Fixed destructuring
-      const { token: authToken, user: newUser } = response.data;
+        return { success: true, user: data.user };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Login failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
 
-      token.value = authToken;
-      user.value = newUser;
+    // ------------------- Admin Registration -------------------
+    async adminRegister(adminData) {
+      this.loading = true;
+      this.error = null;
 
-      localStorage.setItem("authToken", authToken);
-      localStorage.setItem("user", JSON.stringify(newUser));
+      try {
+        const { data } = await adminAuthAPI.register(adminData);
 
-      return { success: true, data: response.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Registration failed",
-      };
-    }
-  };
+        // Admin registration returns user but no token
+        return {
+          success: true,
+          message: "Admin registered successfully",
+          user: data.admin,
+        };
+      } catch (error) {
+        this.error =
+          error.response?.data?.message || "Admin registration failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
 
-  // ===== Admin Authentication =====
-  const adminLogin = async (credentials) => {
-    try {
-      const response = await adminAuthAPI.login(credentials);
-      const { token: authToken, admin: adminData } = response.data;
+    // ------------------- Admin Login -------------------
+    // In authStore.js - Fix admin login
+    async adminLogin(credentials) {
+      this.loading = true;
+      this.error = null;
 
-      token.value = authToken;
-      user.value = adminData;
+      try {
+        const { data } = await adminAuthAPI.login(credentials);
 
-      localStorage.setItem("authToken", authToken);
-      localStorage.setItem("user", JSON.stringify(adminData));
+        // ✅ CORRECT: Backend returns { data: { user, token } }
+        this.token = data.data.token;
+        this.user = data.data.user;
+        this.isAuthenticated = true;
+        this.isAdmin = true;
 
-      return { success: true, data: response.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Admin login failed",
-      };
-    }
-  };
+        localStorage.setItem("authToken", data.data.token);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
 
-  const adminRegister = async (adminData) => {
-    try {
-      const response = await adminAuthAPI.register(adminData);
-      const { token: authToken, user: adminUser } = response.data;
+        return { success: true, user: data.data.user };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Admin login failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
 
-      token.value = authToken;
-      user.value = adminUser;
+    // ------------------- Logout -------------------
+    async logout() {
+      this.loading = true;
 
-      localStorage.setItem("authToken", authToken);
-      localStorage.setItem("user", JSON.stringify(adminUser));
-
-      return { success: true, data: response.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Admin registration failed",
-      };
-    }
-  };
-
-  // ===== Password Recovery =====
-  const forgotPassword = async (phone) => {
-    try {
-      const response = await authAPI.forgotPassword({ phone });
-      return { success: true, data: response.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Password reset failed",
-      };
-    }
-  };
-
-  const resetPassword = async (resetData) => {
-    try {
-      const response = await authAPI.resetPassword(resetData);
-      return { success: true, data: response.data };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || "Password reset failed",
-      };
-    }
-  };
-
-  // ===== Logout =====
-  const logout = async () => {
-    try {
-      if (isAdmin.value) {
-        await adminAuthAPI.logout();
-      } else {
+      try {
         await authAPI.logout();
+      } catch (error) {
+        console.error("Logout API call failed:", error);
+      } finally {
+        // Clear state regardless of API success
+        this.clearAuth();
+        this.loading = false;
       }
-    } catch (error) {
-      console.error("Logout API error:", error);
-    } finally {
-      token.value = null;
-      user.value = null;
+    },
+
+    // ------------------- Forgot Password -------------------
+    async forgotPassword(phone) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data } = await authAPI.forgotPassword({ phone });
+
+        return {
+          success: true,
+          message: data.message,
+          token: data.token, // Reset token (for dev/SMS)
+          expiresIn: data.expiresIn,
+        };
+      } catch (error) {
+        this.error =
+          error.response?.data?.message || "Failed to send reset token";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ------------------- Reset Password -------------------
+    async resetPassword(token, password) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data } = await authAPI.resetPassword({ token, password });
+
+        return {
+          success: true,
+          message: data.message,
+        };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Password reset failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ------------------- Fetch Current User Profile -------------------
+    async fetchUserProfile() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data } = await userAPI.getProfile();
+
+        // Update user data
+        this.user = data;
+        this.isAdmin = data.role === "admin";
+
+        // Update localStorage
+        localStorage.setItem("user", JSON.stringify(data));
+
+        return { success: true, user: data };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Failed to fetch profile";
+
+        // If 401, clear auth
+        if (error.response?.status === 401) {
+          this.clearAuth();
+        }
+
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ------------------- Update User Profile -------------------
+    async updateProfile(userData) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data } = await userAPI.updateProfile(userData);
+
+        // Update local user data
+        this.user = data.user;
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        return { success: true, user: data.user };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Profile update failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ------------------- Change Password -------------------
+    async changePassword(currentPassword, newPassword) {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        const { data } = await userAPI.updatePassword({
+          currentPassword,
+          newPassword,
+        });
+
+        return { success: true, message: data.message };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Password change failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ------------------- Delete Account -------------------
+    async deleteAccount() {
+      this.loading = true;
+      this.error = null;
+
+      try {
+        await userAPI.deleteAccount();
+        this.clearAuth();
+
+        return { success: true, message: "Account deleted successfully" };
+      } catch (error) {
+        this.error = error.response?.data?.message || "Account deletion failed";
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // ------------------- Clear Auth State -------------------
+    clearAuth() {
+      this.user = null;
+      this.token = null;
+      this.isAuthenticated = false;
+      this.isAdmin = false;
+      this.error = null;
+
+      // Clear localStorage
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
-    }
-  };
+    },
 
-  // ===== Update user data =====
-  const updateUser = (userData) => {
-    user.value = { ...user.value, ...userData };
-    localStorage.setItem("user", JSON.stringify(user.value));
-  };
+    // ------------------- Set Error -------------------
+    setError(message) {
+      this.error = message;
+    },
 
-  // Initialize on store creation
-  initAuth();
-
-  return {
-    user: computed(() => user.value),
-    token: computed(() => token.value),
-    isAuthenticated,
-    isAdmin,
-    login,
-    register,
-    adminLogin,
-    adminRegister,
-    forgotPassword,
-    resetPassword,
-    logout,
-    updateUser,
-  };
+    // ------------------- Clear Error -------------------
+    clearError() {
+      this.error = null;
+    },
+  },
 });

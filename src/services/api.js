@@ -1,5 +1,5 @@
+// src/services/api.js
 import axios from "axios";
-import { useLoaderStore } from "@/stores/loaderStore";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -9,92 +9,22 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// ------------------- SMART LOADER SYSTEM -------------------
-
-let activeRequests = 0;
-let loaderTimeout;
-
-const endpointMessages = {
-  "/api/auth/login": "Logging you in...",
-  "/api/auth/register": "Creating your account...",
-  "/api/auth/logout": "Logging you out...",
-  "/api/users/me": "Fetching your profile...",
-  "/api/users/update": "Updating your profile...",
-  "/api/users/kyc": "Uploading KYC documents...",
-  "/api/users/select-country-currency": "Saving your preferences...",
-  "/api/investments": "Loading your investments...",
-  "/api/transactions/me": "Retrieving transactions...",
-  "/api/transactions/deposit": "Processing your deposit...",
-  "/api/transactions/withdraw": "Submitting your withdrawal request...",
-  "/api/transactions/swap": "Swapping your assets...",
-  "/api/admin/plans": "Fetching investment plans...",
-  "/api/admin/plans/create": "Creating new investment plan...",
-  "/api/admin/plans/edit": "Updating investment plan...",
-  "/api/admin/plans/delete": "Deleting investment plan...",
-  "/api/admin/transactions": "Loading all transactions...",
-  "/api/admin/investments/get": "Fetching all investments...",
-  "/api/notifications": "Fetching notifications...",
-};
-
-// Helper: Match endpoint with readable message
-const getMessageForEndpoint = (url = "") => {
-  for (const [key, msg] of Object.entries(endpointMessages)) {
-    if (url.includes(key)) return msg;
-  }
-  return "Loading data...";
-};
-
-// Loader controls
-const startLoader = (url) => {
-  const loader = useLoaderStore();
-  activeRequests++;
-
-  if (activeRequests === 1) {
-    clearTimeout(loaderTimeout);
-    const message = getMessageForEndpoint(url);
-    loaderTimeout = setTimeout(() => {
-      loader.start(message);
-    }, 100);
-  }
-};
-
-const stopLoader = () => {
-  const loader = useLoaderStore();
-  activeRequests = Math.max(0, activeRequests - 1);
-
-  if (activeRequests === 0) {
-    clearTimeout(loaderTimeout);
-    loaderTimeout = setTimeout(() => {
-      loader.stop();
-    }, 150);
-  }
-};
-
 // ------------------- AXIOS INTERCEPTORS -------------------
 
-// ✅ Add token + start loader
+// ✅ Add token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
     if (token) config.headers.Authorization = `Bearer ${token}`;
-    startLoader(config.url);
     return config;
   },
-  (error) => {
-    stopLoader();
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// ✅ Stop loader + handle auth errors
+// ✅ Handle auth errors
 api.interceptors.response.use(
-  (response) => {
-    stopLoader();
-    return response;
-  },
+  (response) => response,
   (error) => {
-    stopLoader();
-
     // Handle expired / invalid token
     if (error.response?.status === 401) {
       localStorage.removeItem("authToken");
@@ -103,7 +33,6 @@ api.interceptors.response.use(
         window.location.href = "/login";
       }
     }
-
     return Promise.reject(error);
   }
 );
@@ -119,7 +48,7 @@ export const authAPI = {
   resetPassword: (data) => api.post("/api/auth/reset-password", data),
 };
 
-// ✅ Admin Auth API (clean separation)
+// ✅ Admin Auth API
 export const adminAuthAPI = {
   register: (adminData) => api.post("/api/admin/register", adminData),
   login: (credentials) => api.post("/api/admin/login", credentials),
@@ -162,40 +91,45 @@ export const transactionAPI = {
   receive: () => api.get("/api/transactions/receive"),
 };
 
-// ✅ Admin API (management endpoints)
+// ✅ Admin API
 export const adminAPI = {
   register: (adminData) => api.post("/api/admin/register", adminData),
   login: (credentials) => api.post("/api/admin/login", credentials),
 
-  // ✅ User management
-  blockUser: (userId) => api.patch(`/api/admin/users/${userId}/block`),
-  deleteUser: (userId) => api.delete(`/api/admin/users/${userId}`),
+  // User management
+  blockUser: (userId) => api.put(`/api/admin/block/${userId}`),
+  deleteUser: (userId) => api.delete(`/api/admin/user/${userId}`),
   getAllUsers: (params = {}) => api.get("/api/admin/users", { params }),
 
-  // ✅ Investment plans
-  getAllPlans: () => api.get("/api/admin/plans"),
-  createPlan: (planData) => api.post("/api/admin/plans", planData),
-  editPlan: (planId, planData) => api.patch(`/api/admin/plans/${planId}`, planData),
-  deletePlan: (planId) => api.delete(`/api/admin/plans/${planId}`),
+  // Investment plans
+getAllPlans: () => api.get("/api/admin/plans"), // if you have this route
+createPlan: (planData) => api.post("/api/admin/plans/create", planData),
+editPlan: (planId, planData) => api.put(`/api/admin/plans/edit/${planId}`, planData),
+deletePlan: (planId) => api.delete(`/api/admin/plans/delete/${planId}`),
 
-  // ✅ Transactions
-  getAllTransactions: (params = {}) => api.get("/api/admin/transactions", { params }),
-  approveWithdrawal: (id) => api.patch(`/api/admin/transactions/${id}/withdrawal/approve`),
-  rejectWithdrawal: (id) => api.patch(`/api/admin/transactions/${id}/withdrawal/reject`),
-  approveDeposit: (id) => api.patch(`/api/admin/transactions/${id}/deposit/approve`),
-  rejectDeposit: (id) => api.patch(`/api/admin/transactions/${id}/deposit/reject`),
 
-  // ✅ Overview & analytics
-  getLeaderboard: (params = {}) => api.get("/api/admin/leaderboard", { params }),
-  getPendingAndDue: () => api.get("/api/admin/pending-due"),
-  getAllInvestments:() => api.get("/api/admin/investments/get"),
-  getInvestmentsDueTomorrow: () => api.get("/api/admin/investments/due-tomorrow"),
+  // Transactions (Admin-level)
+  getAllTransactions: (params = {}) =>
+    api.get("/api/admin/transactions", { params }),
+  approveWithdrawal: (id) => api.patch(`/api/admin/transactions/withdrawals/${id}/approve`),
+  rejectWithdrawal: (id) => api.patch(`/api/admin/transactions/withdrawals/${id}/reject`),
+  approveDeposit: (id) => api.patch(`/api/admin/admin/deposit/${id}/approve`),
+  rejectDeposit: (id) => api.patch(`/api/admin/admin/deposit/${id}/reject`),
 
-  // ✅ Admin-level notifications
-  getAllNotifications: (params = {}) => api.get("/api/admin/notifications", { params }),
+  // Analytics & Overview
+  getLeaderboard: (params = {}) =>
+    api.get("/api/admin/leaderboard", { params }),
+  getPendingAndDue: () => api.get("/api/admin/overview/pending-due"),
+  getAllInvestments: () => api.get("/api/admin/investments/get"),
+  getInvestmentsDueTomorrow: () =>
+    api.get("/api/admin/investments/due-tomorrow"),
+
+  // Notifications
+  getAllNotifications: (params = {}) =>
+    api.get("/api/admin/notifications", { params }),
 };
 
-// ✅ Notifications API
+// ✅ Notifications API (User-level)
 export const notificationAPI = {
   getUserNotifications: (params = {}) =>
     api.get("/api/notifications", { params }),

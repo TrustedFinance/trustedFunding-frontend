@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
-import { useLoaderStore } from "@/stores/loaderStore";
+
 
 // --- Public Components ---
 const HomePage = () => import("@/views/Public/HomePage.vue");
@@ -167,10 +167,46 @@ const router = createRouter({
   },
 });
 
+// --- Navigation Guards ---
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore();
 
-router.afterEach(() => {
-  const loader = useLoaderStore();
-  loader.stop();
+
+  // Initialize auth store if not already done
+  if (!authStore.isInitialized) {
+    authStore.initializeAuth();
+  }
+
+  // Check if route requires authentication
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next("/login");
+    return;
+  }
+
+  // Check if route requires guest (redirect if already authenticated)
+  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    if (authStore.isAdmin) {
+      next("/admin/dashboard");
+    } else {
+      next("/user/dashboard");
+    }
+    return;
+  }
+
+  // Check admin routes
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    next("/user/dashboard");
+    return;
+  }
+
+  // Check user routes
+  if (to.meta.requiresUser && authStore.isAdmin) {
+    next("/admin/dashboard");
+    return;
+  }
+
+  next();
 });
+
 
 export default router;

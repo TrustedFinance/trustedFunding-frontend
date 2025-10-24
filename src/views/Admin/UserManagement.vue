@@ -21,17 +21,70 @@
       </div>
     </div>
 
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg border border-gray-200">
+        <div class="text-sm text-gray-500">Total Users</div>
+        <div class="text-2xl font-bold text-gray-900">
+          {{ pagination.total }}
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-lg border border-gray-200">
+        <div class="text-sm text-gray-500">Active Users</div>
+        <div class="text-2xl font-bold text-green-600">
+          {{ activeUsersCount }}
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-lg border border-gray-200">
+        <div class="text-sm text-gray-500">Blocked Users</div>
+        <div class="text-2xl font-bold text-red-600">
+          {{ blockedUsersCount }}
+        </div>
+      </div>
+      <div class="bg-white p-4 rounded-lg border border-gray-200">
+        <div class="text-sm text-gray-500">Admins</div>
+        <div class="text-2xl font-bold text-blue-600">
+          {{ adminUsersCount }}
+        </div>
+      </div>
+    </div>
+
     <!-- Users Table -->
     <div class="bg-white rounded-lg shadow-sm border border-gray-200">
       <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                User
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Contact
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Role
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Balance
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Status
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Actions
+              </th>
             </tr>
           </thead>
 
@@ -44,14 +97,21 @@
               <!-- User Info -->
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                  <div class="flex-shrink-0 h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div
+                    :class="[
+                      'flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center',
+                      user.role === 'admin' ? 'bg-purple-500' : 'bg-blue-500',
+                    ]"
+                  >
                     <UserIcon class="h-6 w-6 text-white" />
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
                       {{ user.name || "Unknown User" }}
                     </div>
-                    <div class="text-sm text-gray-500">ID: {{ user._id }}</div>
+                    <div class="text-sm text-gray-500">
+                      {{ formatDate(user.createdAt) }}
+                    </div>
                   </div>
                 </div>
               </td>
@@ -59,13 +119,32 @@
               <!-- Contact -->
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm text-gray-900">{{ user.email }}</div>
-                <div class="text-sm text-gray-500">{{ user.phone }}</div>
+                <div class="text-sm text-gray-500">
+                  {{ user.phone || "No phone" }}
+                </div>
+                <div v-if="user.country" class="text-xs text-gray-400">
+                  {{ user.country }} • {{ user.currency }}
+                </div>
+              </td>
+
+              <!-- Role -->
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  :class="[
+                    'inline-flex px-2 py-1 text-xs font-semibold rounded-full',
+                    user.role === 'admin'
+                      ? 'bg-purple-100 text-purple-800'
+                      : 'bg-gray-100 text-gray-800',
+                  ]"
+                >
+                  {{ user.role }}
+                </span>
               </td>
 
               <!-- Balance -->
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">
-                  ${{ user.balance?.toLocaleString() || "0.00" }}
+                  ${{ (user.balance || 0).toLocaleString() }}
                 </div>
               </td>
 
@@ -88,23 +167,34 @@
                 <div class="flex space-x-2">
                   <button
                     @click="toggleBlockUser(user)"
-                    :disabled="toggling"
+                    :disabled="togglingUserId === user._id"
                     :class="[
-                      'px-3 py-1 rounded text-xs font-medium',
+                      'px-3 py-1 rounded text-xs font-medium transition-colors',
                       user.isBlocked
                         ? 'bg-green-100 text-green-700 hover:bg-green-200'
                         : 'bg-red-100 text-red-700 hover:bg-red-200',
+                      togglingUserId === user._id
+                        ? 'opacity-50 cursor-not-allowed'
+                        : '',
                     ]"
                   >
-                    {{ user.isBlocked ? "Unblock" : "Block" }}
+                    <span v-if="togglingUserId === user._id">...</span>
+                    <span v-else>{{
+                      user.isBlocked ? "Unblock" : "Block"
+                    }}</span>
                   </button>
 
                   <button
+                    v-if="user.role !== 'admin'"
                     @click="confirmDeleteUser(user)"
-                    class="px-3 py-1 bg-red-100 text-red-700 rounded text-xs font-medium hover:bg-red-200"
+                    class="px-3 py-1 bg-red-100 text-red-700 rounded text-xs font-medium hover:bg-red-200 transition-colors"
                   >
                     Delete
                   </button>
+
+                  <span v-else class="text-xs text-gray-400 px-2 py-1">
+                    Admin
+                  </span>
                 </div>
               </td>
             </tr>
@@ -122,6 +212,35 @@
       <div v-if="!loading && users.length === 0" class="text-center py-8">
         <UsersIcon class="h-12 w-12 mx-auto text-gray-400" />
         <p class="mt-2 text-gray-500">No users found</p>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="users.length > 0" class="px-6 py-4 border-t border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-700">
+            Showing <span class="font-medium">{{ users.length }}</span> of
+            <span class="font-medium">{{ pagination.total }}</span> users
+          </div>
+          <div class="flex space-x-2">
+            <button
+              @click="prevPage"
+              :disabled="pagination.page === 1"
+              class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span class="px-3 py-1 text-sm text-gray-700">
+              Page {{ pagination.page }} of {{ pagination.pages }}
+            </span>
+            <button
+              @click="nextPage"
+              :disabled="pagination.page === pagination.pages"
+              class="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -143,21 +262,22 @@
 
         <p class="text-gray-600 mb-6">
           Are you sure you want to delete user
-          <strong>{{ userToDelete?.name }}</strong>? All their data including
-          investments and transactions will be permanently removed.
+          <strong>{{ userToDelete?.name }}</strong
+          >? All their data including investments and transactions will be
+          permanently removed.
         </p>
 
         <div class="flex justify-end space-x-3">
           <button
             @click="showDeleteModal = false"
-            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded hover:bg-gray-50"
           >
             Cancel
           </button>
           <button
             @click="deleteUser"
             :disabled="deleting"
-            class="px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-50"
+            class="px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:opacity-50 transition-colors"
           >
             {{ deleting ? "Deleting..." : "Delete User" }}
           </button>
@@ -173,13 +293,20 @@ import { adminAPI } from "@/services/api";
 
 const loading = ref(false);
 const deleting = ref(false);
-const toggling = ref(false);
+const togglingUserId = ref(null);
 const users = ref([]);
 const searchQuery = ref("");
 const showDeleteModal = ref(false);
 const userToDelete = ref(null);
 
-// Computed: filter by search
+const pagination = ref({
+  page: 1,
+  limit: 10,
+  total: 0,
+  pages: 1,
+});
+
+// Computed properties
 const filteredUsers = computed(() => {
   if (!searchQuery.value) return users.value;
   const q = searchQuery.value.toLowerCase();
@@ -187,16 +314,46 @@ const filteredUsers = computed(() => {
     (u) =>
       u.name?.toLowerCase().includes(q) ||
       u.email?.toLowerCase().includes(q) ||
-      u.phone?.includes(q)
+      u.phone?.includes(q) ||
+      u._id?.includes(q)
   );
 });
 
+const activeUsersCount = computed(
+  () => users.value.filter((user) => !user.isBlocked).length
+);
+
+const blockedUsersCount = computed(
+  () => users.value.filter((user) => user.isBlocked).length
+);
+
+const adminUsersCount = computed(
+  () => users.value.filter((user) => user.role === "admin").length
+);
+
 // Fetch all users
-const fetchUsers = async () => {
+const fetchUsers = async (page = 1) => {
   try {
     loading.value = true;
-    const { data } = await adminAPI.getAllUsers();
-    users.value = data || [];
+    const params = {
+      page,
+      limit: pagination.value.limit,
+      search: searchQuery.value || undefined,
+    };
+
+    const { data } = await adminAPI.getAllUsers(params);
+
+    if (data && data.success && data.data) {
+      users.value = data.data.users || [];
+      pagination.value = {
+        page: data.data.page,
+        limit: pagination.value.limit,
+        total: data.data.total,
+        pages: data.data.pages,
+      };
+    } else {
+      console.error("Unexpected API response:", data);
+    }
   } catch (err) {
     console.error("Error fetching users:", err);
     users.value = [];
@@ -208,7 +365,8 @@ const fetchUsers = async () => {
 // Block/unblock user
 const toggleBlockUser = async (user) => {
   try {
-    toggling.value = true;
+    togglingUserId.value = user._id;
+
     if (user.isBlocked) {
       await adminAPI.unblockUser(user._id);
       user.isBlocked = false;
@@ -217,9 +375,10 @@ const toggleBlockUser = async (user) => {
       user.isBlocked = true;
     }
   } catch (err) {
-    console.error("Error toggling user:", err);
+    console.error("Error toggling user block status:", err);
+    alert("Failed to update user status");
   } finally {
-    toggling.value = false;
+    togglingUserId.value = null;
   }
 };
 
@@ -234,15 +393,59 @@ const deleteUser = async () => {
   try {
     deleting.value = true;
     await adminAPI.deleteUser(userToDelete.value._id);
+
+    // Remove user from local state
     users.value = users.value.filter((u) => u._id !== userToDelete.value._id);
+
+    // Update pagination total
+    pagination.value.total -= 1;
+
     showDeleteModal.value = false;
+    userToDelete.value = null;
   } catch (err) {
     console.error("Error deleting user:", err);
+    alert("Failed to delete user");
   } finally {
     deleting.value = false;
   }
 };
 
+// Pagination
+const nextPage = () => {
+  if (pagination.value.page < pagination.value.pages) {
+    pagination.value.page += 1;
+    fetchUsers(pagination.value.page);
+  }
+};
+
+const prevPage = () => {
+  if (pagination.value.page > 1) {
+    pagination.value.page -= 1;
+    fetchUsers(pagination.value.page);
+  }
+};
+
+// Utility function
+const formatDate = (dateString) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+// Watch search query with debounce
+let searchTimeout;
+const watchSearchQuery = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    pagination.value.page = 1;
+    fetchUsers(1);
+  }, 500);
+};
+
 // On mount
-onMounted(fetchUsers);
+onMounted(() => {
+  fetchUsers(1);
+});
 </script>

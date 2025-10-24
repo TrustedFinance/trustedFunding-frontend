@@ -8,7 +8,7 @@
       <component
         v-if="authHydrated"
         :is="layout"
-        :key="$route.fullPath"
+        :key="layout.name + '-' + $route.fullPath"
       />
     </transition>
 
@@ -36,6 +36,7 @@ import ToastContainer from "@/components/atoms/ToastContainer.vue";
 
 const route = useRoute();
 const authStore = useAuthStore();
+authStore.initializeAuth();
 const authHydrated = ref(false); // local flag to control UI rendering
 
 /**
@@ -44,11 +45,10 @@ const authHydrated = ref(false); // local flag to control UI rendering
  */
 onMounted(async () => {
   try {
-    await authStore.ensureHydrated();
+    authStore.initializeAuth();
 
-    // If already authenticated, verify user profile
     if (authStore.isAuthenticated) {
-      await authStore.refreshProfile().catch(() => {
+      await authStore.fetchUserProfile().catch(() => {
         authStore.clearAuth();
       });
     }
