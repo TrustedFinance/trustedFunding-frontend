@@ -75,16 +75,16 @@
               </h3>
               <div class="space-y-1">
                 <a 
-                  href="mailto:support@metamasklog.live" 
+                  href="mailto:support@trustedfinance@gmail.com" 
                   class="block text-primary-blue hover:text-dark-navy transition-colors duration-200 text-sm lg:text-base"
                 >
-                  support@metamasklog.live
+                  support@trustedfinance@gmail.com
                 </a>
                 <a 
-                  href="mailto:support@metamasklog.live" 
+                  href="mailto:support@trustedfinance@gmail.com" 
                   class="block text-primary-blue hover:text-dark-navy transition-colors duration-200 text-sm lg:text-base"
                 >
-                  support@metamasklog.live
+                  support@trustedfinance@gmail.com
                 </a>
               </div>
             </div>
@@ -102,7 +102,7 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
-                href="mailto:support@metamasklog.live" 
+                href="mailto:support@trustedfinance@gmail.com" 
                 class="btn-primary inline-flex items-center justify-center"
               >
                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -136,7 +136,7 @@ const toast = useToast();
 
 const copyEmail = async () => {
   try {
-    await navigator.clipboard.writeText('support@metamasklog.live');
+    await navigator.clipboard.writeText('support@trustedfinance@gmail.com');
     toast.success('Email address copied to clipboard!');
   } catch (err) {
     toast.error('Failed to copy email address');

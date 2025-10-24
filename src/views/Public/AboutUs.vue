@@ -163,7 +163,7 @@
                   >
                   by
                   <a
-                    href="mailto:support@metamasklog.live"
+                    href="mailto:support@trustedfinance@gmail.com"
                     class="text-primary-blue hover:text-dark-navy underline"
                     >Email</a
                   >!
@@ -172,7 +172,7 @@
                   Trusted FinanceOption is always interested in meeting talented
                   applicants. If you're interested in joining our team,
                   <a
-                    href="mailto:support@metamasklog.live"
+                    href="mailto:support@trustedfinance@gmail.com"
                     class="text-primary-blue hover:text-dark-navy underline"
                     >email</a
                   >

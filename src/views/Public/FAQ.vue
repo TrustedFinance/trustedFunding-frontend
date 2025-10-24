@@ -101,7 +101,7 @@
                 friendly team.
               </p>
               <a
-                href="mailto:support@metamasklog.live"
+                href="mailto:support@trustedfinance@gmail.com"
                 class="inline-flex items-center px-5 py-3 bg-primary-blue text-white rounded-lg  hover:bg-dark-navy transition-all duration-300"
               >
                 <svg
@@ -161,7 +161,7 @@ const faqs = ref([
     question:
       "I have problems with the registration process. What should I do?",
     answer:
-      'Our support team is ready to assist you. Contact us at <a href="mailto:support@metamasklog.live" class="text-primary-blue underline hover:text-dark-navy">support@metamasklog.live</a>.',
+      'Our support team is ready to assist you. Contact us at <a href="mailto:support@trustedfinance@gmail.com" class="text-primary-blue underline hover:text-dark-navy">support@trustedfinance@gmail.com</a>.',
   },
   {
     id: 6,

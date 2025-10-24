@@ -30,7 +30,7 @@ import AdminLayout from "@/layouts/AdminLayout.vue";
 import NoneLayout from "@/layouts/NoneLayout.vue";
 
 // --- Other Global Components ---
-import GlobalLoader from "@/components/atoms/GlobalLoader.vue";
+import GlobalLoader from "@/components/Atoms/GlobalLoader.vue";
 import ScrollToTop from "@/components/ScrollToTop.vue";
 import ToastContainer from "@/components/atoms/ToastContainer.vue";
 
