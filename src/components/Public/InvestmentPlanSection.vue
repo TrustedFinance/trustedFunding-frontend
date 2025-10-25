@@ -32,114 +32,65 @@
         </div>
       </div>
 
-      <!-- Pricing Cards -->
-      <div class="row">
-        <div class="pricing pricing-simple">
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8"
-          >
-            <!-- Basic Plan -->
-            <div
-              v-for="(plan, index) in pricingPlans"
-              :key="index"
-              class="pricing-item group"
-            >
+      <!-- Investment Plans Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
+        <div
+          v-for="plan in investmentPlans"
+          :key="plan._id"
+          class="bg-white rounded-2xl transition-all duration-500 overflow-hidden h-full flex flex-col transform hover:-translate-y-2 border border-gray-200"
+        >
+          <!-- Header -->
+          <div class="p-6 lg:p-8 flex-1 flex flex-col">
+            <!-- Title -->
+            <div class="text-center mb-6">
               <div
-                class="bg-white rounded-2xl transition-all duration-500 overflow-hidden h-full flex flex-col transform hover:-translate-y-2 border border-gray-200"
+                class="w-16 h-16 mx-auto bg-gradient-to-br from-[#333366] to-[#0066cc] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500"
               >
-                <!-- Popular Badge -->
-                <div
-                  v-if="plan.popular"
-                  class="bg-gradient-to-r from-[#333366] to-[#0066cc] text-white py-2 text-center text-sm font-semibold"
-                >
-                  Most Popular
-                </div>
-
-                <!-- Header -->
-                <div class="p-6 lg:p-8 flex-1 flex flex-col">
-                  <!-- Icon & Title -->
-                  <div class="text-center mb-6">
-                    <div
-                      class="w-16 h-16 mx-auto bg-gradient-to-br from-[#333366] to-[#0066cc] rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500"
-                    >
-                      <font-awesome-icon
-                        :icon="plan.icon"
-                        class="text-white text-xl"
-                      />
-                    </div>
-                    <h4 class="text-xl lg:text-2xl font-bold text-[#333366]">
-                      {{ plan.title }}
-                    </h4>
-                  </div>
-
-                  <!-- Price -->
-                  <div
-                    class="text-center mb-6 p-4 bg-gradient-to-r from-[#333366] to-[#0066cc] rounded-xl"
-                  >
-                    <div class="text-white font-bold text-2xl lg:text-3xl">
-                      {{ plan.price }}
-                    </div>
-                    <p class="text-white/80 text-sm mt-1">
-                      {{ plan.priceSubtitle }}
-                    </p>
-                  </div>
-
-                  <!-- Features -->
-                  <ul class="space-y-4 mb-8 flex-1">
-                    <li
-                      v-for="(feature, featureIndex) in plan.features"
-                      :key="featureIndex"
-                      class="flex items-center justify-between text-sm lg:text-base"
-                    >
-                      <span class="text-gray-700 flex-1">{{
-                        feature.text
-                      }}</span>
-                      <font-awesome-icon
-                        :icon="
-                          feature.included ? 'check-circle' : 'times-circle'
-                        "
-                        :class="[
-                          'w-4 h-4 flex-shrink-0 ml-2',
-                          feature.included ? 'text-green-500' : 'text-red-400',
-                        ]"
-                      />
-                    </li>
-                  </ul>
-
-                  <!-- Profit Highlight -->
-                  <div
-                    class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 mb-6 border border-green-200"
-                  >
-                    <p
-                      class="text-green-800 font-semibold text-center text-sm lg:text-base"
-                    >
-                      <font-awesome-icon
-                        icon="chart-line"
-                        class="w-3 h-3 mr-1"
-                      />
-                      Profit: {{ plan.profit }}
-                    </p>
-                  </div>
-
-                  <!-- CTA Button -->
-                  <button
-                    @click="selectPlan(plan)"
-                    class="w-full bg-gradient-to-r from-[#333366] to-[#0066cc] text-white py-3 lg:py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 group/btn"
-                  >
-                    <span>Get Started</span>
-                    <font-awesome-icon
-                      icon="arrow-right"
-                      class="w-3 h-3 lg:w-4 lg:h-4 group-hover/btn:translate-x-1 transition-transform duration-300"
-                    />
-                  </button>
-
-                  <!-- Additional Info -->
-                  <p class="text-gray-500 text-xs text-center mt-3">
-                    {{ plan.note }}
-                  </p>
-                </div>
+                <font-awesome-icon icon="chart-line" class="text-white text-xl" />
               </div>
+              <h4 class="text-xl lg:text-2xl font-bold text-[#333366]">
+                {{ plan.name }}
+              </h4>
             </div>
+
+            <!-- ROI & Duration -->
+            <div
+              class="text-center mb-6 p-4 bg-gradient-to-r from-[#333366] to-[#0066cc] rounded-xl"
+            >
+              <div class="text-white font-bold text-2xl lg:text-3xl">
+                {{ (plan.multiplier * 100 - 100).toFixed(0) }}% ROI
+              </div>
+              <p class="text-white/80 text-sm mt-1">
+                Duration: {{ plan.durationDays }} days
+              </p>
+            </div>
+
+            <!-- Plan Details -->
+            <ul class="space-y-4 mb-8 flex-1">
+              <li class="flex justify-between text-sm lg:text-base">
+                <span class="text-gray-700">Min Investment:</span>
+                <span class="font-medium text-gray-900">{{
+                  formatCurrency(plan.minAmount)
+                }}</span>
+              </li>
+              <li class="flex justify-between text-sm lg:text-base">
+                <span class="text-gray-700">Max Investment:</span>
+                <span class="font-medium text-gray-900">{{
+                  formatCurrency(plan.maxAmount)
+                }}</span>
+              </li>
+              <li class="flex justify-between text-sm lg:text-base">
+                <span class="text-gray-700">Multiplier:</span>
+                <span class="font-medium text-gray-900">
+                  x{{ plan.multiplier }}
+                </span>
+              </li>
+            </ul>
+
+            <!-- Description -->
+            <p class="text-gray-600 text-sm text-center mt-auto">
+              {{ plan.description }}
+            </p>
           </div>
         </div>
       </div>
@@ -236,82 +187,35 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
+import { investmentAPI } from "@/services/api";
+import { useToast } from "@/composables/toast";
 
 const router = useRouter();
+const authStore = useAuthStore();
+const toast = useToast();
 
-// Pricing plans data
-const pricingPlans = ref([
-  {
-    title: "Basic Plan",
-    icon: "star",
-    price: "$300 - $699",
-    priceSubtitle: "USD, EUR, GBP",
-    popular: false,
-    features: [
-      { text: "Commission", included: false },
-      { text: "Limited instruments", included: true },
-      { text: "Access to all trading assets", included: true },
-      { text: "24/7 live Support", included: true },
-    ],
-    profit: "$4,200 - $9,786",
-    note: "Perfect for beginners",
-    action: "/register/basic",
-  },
-  {
-    title: "Silver Plan",
-    icon: "award",
-    price: "$700 - $1,999",
-    priceSubtitle: "USD, EUR, GBP",
-    popular: true,
-    features: [
-      { text: "Commission", included: false },
-      { text: "Full access to all instruments", included: true },
-      { text: "24/7 live Support", included: true },
-      { text: "Full access education centre", included: true },
-    ],
-    profit: "$9,800 - $27,986",
-    note: "Most popular choice",
-    action: "/register/silver",
-  },
-  {
-    title: "Gold Plan",
-    icon: "crown",
-    price: "$2,000 - $3,490",
-    priceSubtitle: "USD, EUR, GBP",
-    popular: false,
-    features: [
-      { text: "Commission", included: false },
-      { text: "Full access to all instruments", included: true },
-      { text: "24/7 live Support", included: true },
-      { text: "Full access education centre", included: true },
-    ],
-    profit: "$28,000 - $48,860",
-    note: "Advanced trading features",
-    action: "/register/gold",
-  },
-  {
-    title: "Platinum Plan",
-    icon: "gem",
-    price: "$3,500+",
-    priceSubtitle: "USD, EUR, GBP",
-    popular: false,
-    features: [
-      { text: "Commission", included: false },
-      { text: "Full access to all instruments", included: true },
-      { text: "24/7 live Support", included: true },
-      { text: "Full access education centre", included: true },
-    ],
-    profit: "$49,000+",
-    note: "Premium investment solution",
-    action: "/register/platinum",
-  },
-]);
+const investmentPlans = ref([]);
 
-// Methods
-const selectPlan = (plan) => {
-  router.push(plan.action);
+// Fetch plans
+const loadInvestmentPlans = async () => {
+  try {
+    const response = await investmentAPI.getAllPublicPlans();
+    investmentPlans.value = response.data;
+  } catch (error) {
+    console.error("Failed to load investment plans:", error);
+    toast.error("Failed to load investment plans");
+  }
+};
+
+// Currency formatter
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: authStore.user?.currency || "USD",
+  }).format(amount);
 };
 
 const contactSupport = () => {
@@ -321,205 +225,7 @@ const contactSupport = () => {
 const viewFAQ = () => {
   router.push("/faq");
 };
+
+onMounted(loadInvestmentPlans);
 </script>
 
-<style scoped>
-.pricing-area {
-  padding: 40px 0;
-}
-
-.bottom-less {
-  padding-bottom: 0;
-}
-
-/* Mobile-first responsive design */
-@media (max-width: 639px) {
-  .grid-cols-1 {
-    grid-template-columns: 1fr;
-  }
-
-  .p-6 {
-    padding: 1.5rem;
-  }
-
-  .text-2xl {
-    font-size: 1.5rem;
-  }
-
-  .text-xl {
-    font-size: 1.25rem;
-  }
-
-  .gap-6 {
-    gap: 1.5rem;
-  }
-
-  .space-y-4 > * + * {
-    margin-top: 1rem;
-  }
-}
-
-@media (min-width: 640px) and (max-width: 767px) {
-  .grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .p-6 {
-    padding: 1.5rem;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1279px) {
-  .grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .p-8 {
-    padding: 2rem;
-  }
-
-  .text-3xl {
-    font-size: 1.875rem;
-  }
-
-  .text-2xl {
-    font-size: 1.5rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .grid-cols-4 {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  .p-8 {
-    padding: 2rem;
-  }
-
-  .text-4xl {
-    font-size: 2.25rem;
-  }
-
-  .gap-8 {
-    gap: 2rem;
-  }
-}
-
-/* Large desktop optimizations */
-@media (min-width: 1536px) {
-  .container {
-    max-width: 1280px;
-  }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .group:hover .group-hover\:scale-110 {
-    transform: scale(1);
-  }
-
-  .transform.hover\:-translate-y-2:hover {
-    transform: translateY(0);
-  }
-
-  /* Increase tap targets for mobile */
-  button {
-    min-height: 44px;
-  }
-
-  .pricing-item {
-    min-height: auto;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  .transition-all,
-  .transition-transform {
-    transition: none;
-  }
-
-  .group-hover\:scale-110,
-  .group-hover\/btn\:translate-x-1,
-  .hover\:-translate-y-2 {
-    transform: none;
-  }
-}
-
-/* High contrast mode */
-@media (prefers-contrast: high) {
-  .bg-gradient-to-r {
-    background: #333366 !important;
-  }
-
-  .border-gray-200 {
-    border-color: #000 !important;
-  }
-
-  .text-gray-600 {
-    color: #000 !important;
-  }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .dark\:bg-gray-900 {
-    background-color: #1a1a1a;
-  }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #333366, #0066cc);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #2a2a55, #0052a3);
-}
-
-/* Smooth transitions */
-* {
-  transition-property: color, background-color, border-color, transform, opacity;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Focus states for accessibility */
-button:focus-visible,
-.pricing-item:focus-visible {
-  outline: 2px solid #333366;
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-/* Ensure equal height on pricing cards */
-.pricing-item {
-  display: flex;
-}
-
-.pricing-item > div {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Print styles */
-@media print {
-  .pricing-area {
-    background: white !important;
-  }
-
-  .transform {
-    transform: none !important;
-  }
-}
-</style>

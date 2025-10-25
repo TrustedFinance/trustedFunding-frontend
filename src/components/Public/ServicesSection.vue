@@ -19,9 +19,9 @@
               Our Services
             </h2>
             <p class="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              With over 2,000,000 clients since it was founded in 2011,
-              Trusted Finance has grown to a well established international
-              Trading and investment firm and has become a true industry leader.
+              With over 2,000,000 clients since it was founded in 2011, Trusted
+              Finance has grown to a well established international Trading and
+              investment firm and has become a true industry leader.
             </p>
           </div>
         </div>
@@ -39,14 +39,14 @@
             class="single-item group"
           >
             <div
-              class="item bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden h-full flex flex-col transform hover:-translate-y-2 relative"
+              class="item bg-white rounded-2xl shadow-lg transition-all duration-500 overflow-hidden h-full flex flex-col relative"
             >
               <!-- Image -->
               <div class="thumb relative overflow-hidden">
                 <img
                   :src="service.image"
                   :alt="service.title"
-                  class="w-full h-48 lg:h-56 object-cover transition-transform duration-700 group-hover:scale-110"
+                  class="w-full h-48 lg:h-56 object-cover"
                   @load="service.imageLoaded = true"
                   @error="service.imageLoaded = true"
                 />
@@ -116,7 +116,7 @@
                 </div>
 
                 <!-- CTA Button -->
-                <button
+                <!-- <button
                   @click="navigateToService(service)"
                   class="w-full bg-gradient-to-r from-[#333366] to-[#0066cc] text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 group/btn mt-auto"
                 >
@@ -125,7 +125,7 @@
                     icon="arrow-right"
                     class="w-3 h-3 group-hover/btn:translate-x-1 transition-transform duration-300"
                   />
-                </button>
+                </button> -->
               </div>
 
               <!-- Hover Border Effect -->
@@ -153,23 +153,17 @@
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 @click="startTrading"
-                class="bg-white text-[#333366] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-105 flex items-center gap-3 group"
+                class="bg-white text-[#333366] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 flex items-center gap-3 group"
               >
                 <span>Start Trading Now</span>
-                <font-awesome-icon
-                  icon="rocket"
-                  class="w-4 h-4 group-hover:scale-110 transition-transform duration-300"
-                />
+                <font-awesome-icon icon="rocket" class="w-4 h-4" />
               </button>
               <button
                 @click="contactSupport"
-                class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition-all duration-300 hover:scale-105 flex items-center gap-3 group"
+                class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold hover:bg-white/10 flex items-center gap-3 group"
               >
                 <span>Contact Support</span>
-                <font-awesome-icon
-                  icon="headset"
-                  class="w-4 h-4 group-hover:scale-110 transition-transform duration-300"
-                />
+                <font-awesome-icon icon="headset" class="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -197,7 +191,7 @@ const services = ref([
     description:
       "Easy access for beginners & experienced traders. Know your potential profit in advance — just predict the market direction and trade confidently.",
     image: leaImg,
-    link: "https://Trusted Finance.com/forex-trading",
+    // link: "https://Trusted Finance.com/forex-trading",
     icon: "chart-line",
     features: [
       "Beginner-friendly platform",
@@ -212,7 +206,7 @@ const services = ref([
     description:
       "Realtime Analysis & Proper Planning. Monitor assets in real-time and make informed trading decisions with confidence.",
     image: leaderImg,
-    link: "https://Trusted Finance.com/planning",
+    // link: "https://Trusted Finance.com/planning",
     icon: "magnifying-glass-chart",
     features: [
       "Real-time analytics",
@@ -227,7 +221,7 @@ const services = ref([
     description:
       "High returns powered by our proven and reliable trade signals built on expert analysis.",
     image: tradeImg,
-    link: "https://Trusted Finance.com/trade-signals",
+    // link: "https://Trusted Finance.com/trade-signals",
     icon: "bullhorn",
     features: [
       "Accurate trade signals",
@@ -242,7 +236,7 @@ const services = ref([
     description:
       "Our support team is available around the clock through live chat or email — always ready to assist you.",
     image: consultImg,
-    link: "https://Trusted Finance.com/support",
+    // link: "https://Trusted Finance.com/support",
     icon: "headset",
     features: [
       "24/7 live chat",

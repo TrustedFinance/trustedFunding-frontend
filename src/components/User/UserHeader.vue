@@ -17,13 +17,13 @@
           <div class="text-center">
             <p class="text-xs text-gray-500">Total Balance</p>
             <p class="text-lg font-semibold text-highlight-text">
-              {{ formatCurrency(authStore.user?.balance || 0) }}
+              {{ formatCurrency(user?.balance || 0) }}
             </p>
           </div>
           <div class="text-center">
             <p class="text-xs text-gray-500">Total Earned</p>
             <p class="text-lg font-semibold text-green-600">
-              {{ formatCurrency(authStore.user?.stats?.totalEarned || 0) }}
+              {{ formatCurrency(user?.stats?.totalEarned || 0) }}
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@
                 </span>
               </div>
               <span class="hidden sm:block text-sm font-medium text-highlight-text">
-                {{ authStore.user?.name }}
+                {{ user?.name }}
               </span>
               <font-awesome-icon :icon="['fas', 'chevron-down']" class="h-4 w-4 text-gray-400" />
             </button>
@@ -119,10 +119,7 @@
         <div
           v-for="notification in notifications"
           :key="notification.id"
-          :class="[
-            'p-4 border-b border-gray-100 hover:bg-cool-light cursor-pointer',
-            { 'bg-blue-50': !notification.read }
-          ]"
+          :class="[ 'p-4 border-b border-gray-100 hover:bg-cool-light cursor-pointer', { 'bg-blue-50': !notification.read } ]"
           @click="markAsRead(notification.id)"
         >
           <p class="text-sm text-gray-800">{{ notification.message }}</p>
@@ -136,12 +133,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { notificationAPI } from '@/services/api'
 
 const authStore = useAuthStore()
+const { user, isAuthenticated, isAdmin } = storeToRefs(authStore)
 const router = useRouter()
 
 const showUserMenu = ref(false)
@@ -150,7 +149,7 @@ const notifications = ref([])
 
 // Computed
 const getUserInitials = computed(() => {
-  const name = authStore.user?.name || ''
+  const name = user.value?.name || ''
   return name
     .split(' ')
     .map(word => word[0])
@@ -185,12 +184,13 @@ const toggleSidebar = () => {
 const handleLogout = async () => {
   await authStore.logout()
   showUserMenu.value = false
+  router.push('/') // ✅ immediately redirect after logout
 }
 
 const formatCurrency = (amount) => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: authStore.user?.currency || 'USD'
+    currency: user.value?.currency || 'USD'
   }).format(amount)
 }
 
@@ -235,6 +235,11 @@ const handleClickOutside = (event) => {
     showNotifications.value = false
   }
 }
+
+// 🔍 Watch auth changes — auto redirect if logged out
+watch(isAuthenticated, (val) => {
+  if (!val) router.push('/login')
+})
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)

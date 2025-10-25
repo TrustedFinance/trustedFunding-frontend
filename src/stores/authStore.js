@@ -197,23 +197,21 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const { data } = await userAPI.getProfile();
+        console.log("Fetched user profile:", data);
+        // ✅ Fix: Extract the actual user object
+        this.user = data.user;
 
-        // Update user data
-        this.user = data;
-        this.isAdmin = data.role === "admin";
+        this.isAdmin = data.user?.role === "admin";
 
-        // Update localStorage
-        localStorage.setItem("user", JSON.stringify(data));
+        console.log("Fetched user profile:", data.user);
 
-        return { success: true, user: data };
+        // ✅ Store the actual user, not the wrapper
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        return { success: true, user: data.user };
       } catch (error) {
         this.error = error.response?.data?.message || "Failed to fetch profile";
-
-        // If 401, clear auth
-        if (error.response?.status === 401) {
-          this.clearAuth();
-        }
-
+        if (error.response?.status === 401) this.clearAuth();
         throw error;
       } finally {
         this.loading = false;
@@ -277,6 +275,12 @@ export const useAuthStore = defineStore("auth", {
       } finally {
         this.loading = false;
       }
+    },
+    // in authStore.js
+    async refreshProfile() {
+      const res = await userAPI.getProfile();
+      this.user = res.data.user || res.data;
+      localStorage.setItem("user", JSON.stringify(this.user));
     },
 
     // ------------------- Clear Auth State -------------------

@@ -13,7 +13,11 @@
 
       <!-- Scrollable Main Content -->
       <main class="flex-1 overflow-y-auto p-6">
-       <router-view :key="$route.fullPath" />
+        <router-view v-slot="{ Component, route }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" :key="route.path" />
+          </transition>
+        </router-view>
       </main>
 
       <UserFooter />
@@ -40,3 +44,14 @@ const closeSidebar = () => {
   isSidebarOpen.value = false
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

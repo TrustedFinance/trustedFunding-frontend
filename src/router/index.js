@@ -10,6 +10,7 @@ const FAQ = () => import("@/views/Public/FAQ.vue");
 const LicenseRegulation = () => import("@/views/Public/LicenseRegulation.vue");
 const Pricing = () => import("@/views/Public/Pricing.vue");
 const Privacy = () => import("@/views/Public/Privacy.vue");
+const TermsAndConditions = () => import("@/views/Public/TermsAndConditions.vue");
 const SafetyOfFunds = () => import("@/views/Public/SafetyOfFunds.vue");
 const ServicesPage = () => import("@/views/Public/ServicesPage.vue");
 const TradingConditions = () => import("@/views/Public/TradingConditions.vue");
@@ -57,6 +58,7 @@ const routes = [
       },
       { path: "pricing", name: "Pricing", component: Pricing },
       { path: "privacy-policy", name: "Privacy", component: Privacy },
+      { path: "terms-and-conditions", name: "TermsAndConditions", component: TermsAndConditions },
       {
         path: "safety-of-funds",
         name: "SafetyOfFunds",
@@ -168,43 +170,43 @@ const router = createRouter({
 });
 
 // --- Navigation Guards ---
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
+  // ✅ Always ensure the auth store is initialized
+  authStore.initializeAuth();
 
-  // Initialize auth store if not already done
-  if (!authStore.isInitialized) {
-    authStore.initializeAuth();
-  }
-
-  // Check if route requires authentication
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next("/login");
-    return;
-  }
-
-  // Check if route requires guest (redirect if already authenticated)
-  if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    if (authStore.isAdmin) {
-      next("/admin/dashboard");
-    } else {
-      next("/user/dashboard");
+  // ✅ Optional: refresh user profile if authenticated but user data is stale
+  if (authStore.isAuthenticated && !authStore.user?.name) {
+    try {
+      await authStore.fetchUserProfile();
+    } catch (error) {
+      console.warn("Profile fetch failed, clearing auth:", error);
+      authStore.clearAuth();
     }
-    return;
   }
 
-  // Check admin routes
+  // 🔒 Route requires authentication
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return next("/login");
+  }
+
+  // 🚫 Route requires guest (redirect if already authenticated)
+  if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    return next(authStore.isAdmin ? "/admin/dashboard" : "/user/dashboard");
+  }
+
+  // 👑 Route requires admin
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    next("/user/dashboard");
-    return;
+    return next("/user/dashboard");
   }
 
-  // Check user routes
+  // 🙍 Route requires user (non-admin)
   if (to.meta.requiresUser && authStore.isAdmin) {
-    next("/admin/dashboard");
-    return;
+    return next("/admin/dashboard");
   }
 
+  // ✅ Continue normally
   next();
 });
 

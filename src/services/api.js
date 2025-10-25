@@ -61,11 +61,7 @@ export const userAPI = {
   updateProfile: (userData) => api.patch("/api/users/update", userData),
   updatePassword: (userData) =>
     api.patch("/api/users/change-password", userData),
-  uploadKyc: (kycData) => {
-    const formData = new FormData();
-    Object.entries(kycData).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+  uploadKyc: (formData) => {
     return api.post("/api/users/kyc", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
@@ -79,6 +75,7 @@ export const userAPI = {
 export const investmentAPI = {
   create: (investmentData) => api.post("/api/investments", investmentData),
   getUserInvestments: () => api.get("/api/investments"),
+  getAllPublicPlans: () => api.get("/api/investments/plans"),
   getAllPlans: () => api.get("/api/users/plans"),
 };
 
@@ -88,6 +85,7 @@ export const transactionAPI = {
   deposit: (data) => api.post("/api/transactions/deposit", data),
   withdraw: (data) => api.post("/api/transactions/withdraw", data),
   swap: (data) => api.post("/api/transactions/swap", data),
+  previewSwap: (data) => api.post("/api/transactions/previewswap", data),
   receive: () => api.get("/api/transactions/receive"),
 };
 
@@ -98,21 +96,24 @@ export const adminAPI = {
 
   // User management
   blockUser: (userId) => api.put(`/api/admin/block/${userId}`),
+  unBlockUser: (userId) => api.put(`/api/admin/unblock/${userId}`),
   deleteUser: (userId) => api.delete(`/api/admin/user/${userId}`),
   getAllUsers: (params = {}) => api.get("/api/admin/users", { params }),
 
   // Investment plans
-getAllPlans: () => api.get("/api/admin/plans"), // if you have this route
-createPlan: (planData) => api.post("/api/admin/plans/create", planData),
-editPlan: (planId, planData) => api.put(`/api/admin/plans/edit/${planId}`, planData),
-deletePlan: (planId) => api.delete(`/api/admin/plans/delete/${planId}`),
-
+  getAllPlans: () => api.get("/api/admin/plans"), // if you have this route
+  createPlan: (planData) => api.post("/api/admin/plans/create", planData),
+  editPlan: (planId, planData) =>
+    api.put(`/api/admin/plans/edit/${planId}`, planData),
+  deletePlan: (planId) => api.delete(`/api/admin/plans/delete/${planId}`),
 
   // Transactions (Admin-level)
   getAllTransactions: (params = {}) =>
     api.get("/api/admin/transactions", { params }),
-  approveWithdrawal: (id) => api.patch(`/api/admin/transactions/withdrawals/${id}/approve`),
-  rejectWithdrawal: (id) => api.patch(`/api/admin/transactions/withdrawals/${id}/reject`),
+  approveWithdrawal: (id) =>
+    api.patch(`/api/admin/transactions/withdrawals/${id}/approve`),
+  rejectWithdrawal: (id) =>
+    api.patch(`/api/admin/transactions/withdrawals/${id}/reject`),
   approveDeposit: (id) => api.patch(`/api/admin/admin/deposit/${id}/approve`),
   rejectDeposit: (id) => api.patch(`/api/admin/admin/deposit/${id}/reject`),
 

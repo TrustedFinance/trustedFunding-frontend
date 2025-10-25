@@ -368,7 +368,7 @@ const toggleBlockUser = async (user) => {
     togglingUserId.value = user._id;
 
     if (user.isBlocked) {
-      await adminAPI.unblockUser(user._id);
+      await adminAPI.unBlockUser(user._id);
       user.isBlocked = false;
     } else {
       await adminAPI.blockUser(user._id);
