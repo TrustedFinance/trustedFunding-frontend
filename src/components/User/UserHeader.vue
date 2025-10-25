@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-white shadow-sm border-b border-silver-gray">
+  <header class="bg-white  border-b border-silver-gray">
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <!-- Left: Mobile Menu Button -->
@@ -64,7 +64,7 @@
             <!-- User Dropdown Menu -->
             <div
               v-if="showUserMenu"
-              class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-silver-gray"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-md py-1 z-50 border border-silver-gray"
             >
               <router-link
                 to="/user/profile"
