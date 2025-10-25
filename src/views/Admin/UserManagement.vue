@@ -343,7 +343,7 @@ const fetchUsers = async (page = 1) => {
 
     const { data } = await adminAPI.getAllUsers(params);
 
-    if (data && data.success && data.data) {
+    if (data?.success && data.data) {
       users.value = data.data.users || [];
       pagination.value = {
         page: data.data.page,
