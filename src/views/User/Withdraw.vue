@@ -219,7 +219,7 @@ const recentWithdrawals = ref([]);
 const isValidWithdrawal = computed(() => {
   const amount = parseFloat(withdrawData.value.amount);
   const balance = authStore.user?.balance || 0;
-  const hasWalletAddress = !!getWalletAddress(withdrawData.value.currency);
+  const hasWalletAddress = Boolean(getWalletAddress(withdrawData.value.currency));
 
   return amount > 0 && amount <= balance && hasWalletAddress;
 });
