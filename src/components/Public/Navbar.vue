@@ -272,7 +272,7 @@ const navigationItems = ref([
 
 const isActiveRoute = (item) =>
   route.path === item.route ||
-  (item.children && item.children.some((child) => route.path === child.route));
+  (item.children?.some((child) => route.path === child.route));
 
 const handleLogoClick = () => {
   activeDropdown.value = null;
